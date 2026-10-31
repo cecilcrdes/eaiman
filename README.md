@@ -4,7 +4,7 @@ Jogo de plataforma em HTML5, CSS e JavaScript, sem instalação de bibliotecas. 
 
 ## Jogar
 
-Abra **index.html** no navegador. Para um endereço local estável, execute `npm start` nesta pasta e abra http://127.0.0.1:4173. Não é necessária conexão com a internet.
+Abra **cecilcrdes.github.io/eaiman.** no navegador. Para um endereço local estável, execute `npm start` nesta pasta e abra http://127.0.0.1:4173. Não é necessária conexão com a internet.
 
 ## Controles
 
@@ -19,7 +19,7 @@ Abra **index.html** no navegador. Para um endereço local estável, execute `npm
 - Esc ou P: pausar.
 - Celulares/tablets: controles de toque na tela.
 
-O Mercado tem uma rua longa, com quase dez telas, um desvio secreto pelo esgoto, carrinho, banca de Teca, almoxarifado de Neymar, descarga, garagem de Maneco e resgate de Tuca. Na primeira visita, pegue o badogue na laje para entrar no Sacolão. Ao concluir a fase, ele fica no equipamento e funciona nas demais fases; seus upgrades de dano são comprados no ferro velho. As três bandeiras pequenas dão uma conquista (uma fica no esgoto); não bloqueiam a entrada. Maneco entrega a grande bandeira vermelha e 20 latinhas. Tuca só fica jogável após a cutscene.
+
 
 ## Campanha
 
@@ -29,9 +29,7 @@ O Mercado tem uma rua longa, com quase dez telas, um desvio secreto pelo esgoto,
 4. A Escola — Chumbinho.
 5. Topo do Morro — Vadinho; encerra a história.
 
-Luketa começa disponível e tem um deslize mais longo. A seleção de personagens aparece depois do primeiro resgate e reabre a cada novo personagem. Todos os personagens liberados podem repetir fases anteriores.
 
-O ferro-velho troca latinhas por dano do badogue, um coração extra e alcance de coleta. A Casa da Vó guarda as conquistas e a grande bandeira. As conquistas são salvas imediatamente. No Mercado, há checkpoints persistentes após Tuca, Neymar, ao entrar na garagem e no resgate. Reabrir o jogo permite continuar do último checkpoint; o trecho após ele precisa ser repetido. As latinhas da tentativa são transferidas para a mochila ao resgatar Tuca. Navegadores, perfis, portas e endereços diferentes podem manter saves separados. Se o armazenamento estiver indisponível, um aviso aparece acima do jogo. Créditos > Apagar progresso permite recomeçar, com confirmação.
 
 ## Organização
 
