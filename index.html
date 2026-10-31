@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#171d21"><meta name="description" content="E Aí Man! Uma aventura em pixel art pelos becos, feiras e lajes da comunidade. Reúna os Canários!">
+  <title>E Aí Man! — Os Canários</title><link rel="stylesheet" href="styles.css">
+  <link rel="preload" as="image" href="assets/jogo/interface/logo-principal.png">
+  <link rel="preload" as="image" href="assets/telas-referencia/Favela Pixelada sob o Sol.png">
+  <link rel="preload" as="image" href="assets/telas-referencia/Botões de Menu em Grafite Pixelado.png">
+  <link rel="preload" as="image" href="assets/telas-referencia/imagem-010.png">
+  <link rel="preload" as="image" href="assets/telas-referencia/imagem-012.png">
+</head>
+<body>
+  <header class="topbar"><a href="#" id="brand" aria-label="E Aí Man, início">E AÍ MAN<span>!</span><small>OS CANÁRIOS</small></a><div class="top-right"><span class="edition">UMA AVENTURA DA NOSSA QUEBRADA</span><button id="sound" class="icon-button" aria-label="Ativar som" title="Ativar som">♪ <span>OFF</span></button><button id="help" class="icon-button" aria-label="Como jogar">?</button></div></header>
+  <main>
+    <div class="game-heading"><span><i class="status-dot"></i> BATALHA DAS ESTRELAS</span><span id="save-status">PROGRESSO SALVO NESTE NAVEGADOR</span></div>
+    <section id="stage" aria-label="Jogo E Aí Man">
+      <canvas id="game" width="480" height="270" tabindex="0" aria-label="Cenário do jogo. Use A e D para andar, Espaço para pular e X para lançar."></canvas>
+      <div class="screen-shade" id="shade"></div>
+      <div id="hud" class="hidden"><div class="hud-player"><canvas id="avatar" width="48" height="60"></canvas><div><b id="hud-name">LUKETA</b><div id="hearts" aria-label="Vida"></div></div></div><div class="hud-items"><span><i class="can-icon"></i> <b id="cans">00</b></span><span><i class="flag-icon"></i> <b id="flags">0/3</b></span><button id="pause" aria-label="Pausar">Ⅱ</button></div><div id="weapon-status"></div><div id="level-label"></div><div id="objective"></div><div id="boss-hud" class="hidden"><span id="boss-name"></span><div><i id="boss-life"></i></div></div></div>
+      <div id="ui"></div>
+      <div id="toast" role="status"></div>
+      <div id="touch-controls" class="hidden"><div><button data-key="left" aria-label="Andar à esquerda">◀</button><button data-key="right" aria-label="Andar à direita">▶</button></div><div><button data-key="slide" aria-label="Deslizar">Z</button><button data-key="interact" aria-label="Interagir ou entrar">E</button><button data-key="shoot" aria-label="Lançar">X</button><button data-key="jump" aria-label="Pular ou subir de corredor">↑</button><button data-key="down" aria-label="Descer de corredor">↓</button></div></div>
+    </section>
+    <div class="game-bottom"><span><span class="live-dot"></span> FEITO DE AMIZADE, CORAGEM E CORRE</span><button id="fullscreen">EXPANDIR <span>⛶</span></button></div>
+    <section class="below"><div><span class="eyebrow">QUATRO AMIGOS. UMA COMUNIDADE.</span><h2>A quebrada é o nosso mundo.</h2><p>A turma sumiu bem no dia da gincana. Siga as pistas de Tuca, conquiste as bandeiras e reúna os Canários.</p></div><div class="quick-controls"><span class="eyebrow">MANDA BEM NOS CONTROLES</span><div><kbd>A</kbd><kbd>D</kbd><span>Mover</span><kbd>ESPAÇO</kbd><span>Pular</span></div><div><kbd>X</kbd><span>Lançar</span><kbd>Z</kbd><span>Deslizar</span><kbd>E</kbd><span>Entrar</span><kbd>ESC</kbd><span>Pausa</span></div></div></section>
+  </main><footer><span>E AÍ MAN! <b>© OS CANÁRIOS</b></span><span>AVENTURA • PLATAFORMA • PIXEL ART</span></footer>
+  <script src="src/engine.js"></script><script src="src/market.js"></script><script src="assets/jogo/animacoes.js"></script><script src="assets/jogo/config.js"></script><script src="src/assets.js"></script><script src="src/art.js"></script><script src="src/market-art.js"></script><script src="src/game.js"></script>
+</body></html>

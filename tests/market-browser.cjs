@@ -1,0 +1,50 @@
+const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
+const {pathToFileURL}=require('node:url'),path=require('node:path'),assert=require('node:assert/strict');
+const url=process.env.GAME_URL||pathToFileURL(path.resolve('index.html')).href;
+(async()=>{
+ const browser=await chromium.launch({headless:true,executablePath:'C:/Program Files/Google/Chrome/Application/chrome.exe'});
+ try{
+  const page=await browser.newPage({viewport:{width:1280,height:950}});const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  await page.goto(url);await page.evaluate(()=>EaiAssets.ready);
+  const observe=()=>page.evaluate(()=>{const step=EaiMarket.MarketWorld.prototype.step;EaiMarket.MarketWorld.prototype.step=function(...args){window.__market=this;return step.apply(this,args);};});
+  await observe();await page.getByRole('button',{name:'Iniciar jogo'}).click();await page.getByRole('button',{name:'PARTIU!'}).click();await page.waitForFunction(()=>!!window.__market);
+  await page.screenshot({path:'tmp/market-street.png',fullPage:true});
+  await page.evaluate(()=>{__market.player.x=1680;__market.player.y=197;});await page.keyboard.press('KeyE');await page.waitForTimeout(100);assert.equal(await page.evaluate(()=>__market.scene),'street');
+  await page.evaluate(()=>{__market.enter('sewer');__market.player.y=400;});await page.waitForTimeout(120);await page.screenshot({path:'tmp/market-sewer.png',fullPage:true});
+  await page.evaluate(()=>{__market.enter('street',true);Object.assign(__market.player,{x:620,y:54,vy:0});});await page.waitForFunction(()=>__market.slingshot);
+  await page.evaluate(()=>{__market.player.x=4400;__market.player.y=197;});await page.keyboard.press('KeyE');await page.waitForFunction(()=>__market.cartMode==='riding');
+  await page.keyboard.press('ArrowUp');await page.waitForTimeout(50);assert.equal(await page.evaluate(()=>__market.cartLane),0);await page.screenshot({path:'tmp/market-cart.png',fullPage:true});
+  await page.evaluate(()=>__market.cartX=1842);await page.waitForFunction(()=>__market.scene==='mariana');await page.waitForFunction(()=>__market.boss.visible);
+  await page.screenshot({path:'tmp/market-mariana.png',fullPage:true});
+  // Encounter outcomes are fixtures here. Engine tests cover vulnerabilities and actual projectiles.
+  await page.evaluate(()=>{const w=__market;w.player.hp=6;w.boss.visible=true;w.boss.hit=0;w.strike(w.boss,9);});await page.waitForFunction(()=>__market.scene==='warehouse');
+  assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('eaiman-canarios-v1')).marketCheckpoint.scene),'warehouse');
+  assert.ok(await page.evaluate(()=>JSON.parse(localStorage.getItem('eaiman-canarios-v1')).achievements.includes('mariana')));
+  await page.reload();await observe();await page.getByRole('button',{name:'Continuar jogo'}).click();await page.getByRole('button',{name:'PARTIU!'}).click();await page.waitForFunction(()=>window.__market?.scene==='warehouse');
+  assert.equal(await page.evaluate(()=>__market.slingshot),true);
+  await page.screenshot({path:'tmp/market-warehouse.png',fullPage:true});
+  const bounds=await page.locator('#game').boundingBox();
+  await page.mouse.move(bounds.x+bounds.width*117/480,bounds.y+bounds.height*163/270);await page.mouse.down();await page.waitForTimeout(850);await page.mouse.up();await page.waitForFunction(()=>__market.supports[0].hp<3);
+  assert.ok(await page.evaluate(()=>__market.aim.y<190));
+  await page.evaluate(()=>__market.supports.forEach(s=>s.hp=0));await page.waitForFunction(()=>__market.scene==='unloading');
+  await page.evaluate(()=>{__market.stageTime=3;__market.nextHazard=0;});await page.waitForTimeout(150);await page.screenshot({path:'tmp/market-trucks.png',fullPage:true});
+  await page.evaluate(()=>{__market.stageTime=12;__market.nextHazard=0;});await page.waitForTimeout(150);assert.ok(await page.evaluate(()=>__market.hazards.some(h=>h.kind==='pile')));
+  await page.evaluate(()=>{__market.stageTime=23;__market.player.x=420;});await page.keyboard.press('KeyE');await page.waitForFunction(()=>__market.scene==='garage');
+  await page.screenshot({path:'tmp/market-garage.png',fullPage:true});
+  await page.evaluate(()=>{__market.player.inv=10;__market.spawnYardTruck();});
+  await page.keyboard.down('ArrowUp');await page.waitForTimeout(350);await page.keyboard.up('ArrowUp');
+  assert.ok(await page.evaluate(()=>__market.player.y<200));
+  await page.screenshot({path:'tmp/market-garage-warning.png',fullPage:true});
+  await page.evaluate(()=>{const h=__market.hazards.find(h=>h.sideways);h.warning=0;h.x=170;});
+  await page.screenshot({path:'tmp/market-garage-truck.png',fullPage:true});
+  await page.evaluate(()=>{const w=__market;w.explode(w.bags[0]);w.boss.hit=0;w.strike(w.boss,24);});await page.waitForFunction(()=>__market.scene==='rescue');
+  assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('eaiman-canarios-v1')).completed),0);
+  await page.waitForTimeout(2400);await page.screenshot({path:'tmp/market-rescue.png',fullPage:true});
+  await page.evaluate(()=>__market.stageTime=8.999);await page.getByRole('button',{name:'ESCOLHER PERSONAGEM'}).waitFor();
+  const save=await page.evaluate(()=>JSON.parse(localStorage.getItem('eaiman-canarios-v1')));assert.equal(save.completed,1);assert.equal(save.marketCheckpoint,null);assert.ok(save.cans>=20);assert.ok(save.achievements.includes('maneco'));assert.ok(save.achievements.includes('neymar'));
+  await page.getByRole('button',{name:'ESCOLHER PERSONAGEM'}).click();assert.equal(await page.locator('[data-character="1"]').isDisabled(),false);assert.equal(await page.locator('[data-character="2"]').isDisabled(),true);
+  await page.getByRole('button',{name:'← MAPA',exact:true}).click();await page.getByRole('button',{name:'CASA DA VÓ',exact:true}).click();await page.screenshot({path:'tmp/market-achievements.png',fullPage:true});
+  assert.equal(await page.locator('.achievement-tile.earned').count(),5);assert.deepEqual(errors,[]);
+  console.log('Market browser QA passed: locked entrance, sewer, roof pickup, cart, three encounters, mouse hit, saved checkpoint reload, delayed Tuca unlock, reward and achievements.');
+ }finally{await browser.close();}
+})().catch(e=>{console.error(e);process.exit(1);});

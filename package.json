@@ -1,0 +1,11 @@
+{
+  "name": "e-ai-man-canarios",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Jogo de plataforma em HTML5 inspirado no GDD E Aí Man.",
+  "scripts": {
+    "start": "node server.cjs",
+    "test": "node --test tests/engine.test.cjs tests/market.test.cjs",
+    "check": "node --check src/engine.js && node --check src/market.js && node --check src/assets.js && node --check src/art.js && node --check src/market-art.js && node --check src/game.js"
+  }
+}
