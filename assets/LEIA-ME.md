@@ -40,7 +40,7 @@ Em **jogo/cenarios/** há duas camadas por fase:
 
 Nomes: market = Mercado; alley = Beco; field = Campinho; school = Escola; rooftop = Topo do Morro.
 
-A primeira fase usa uma rua de 4.600 unidades de largura, quase dez telas até o Sacolão. O esgoto, as lajes, as bandeiras e as fachadas são distribuídos ao longo dela. As pranchas `assets cenario fase1.png`, `assets cenario2-1 fase1.png` e `assets cenario3 fase1.png` são usadas como cenários sobrepostos. As casas de `cenario2-1` formam as plataformas visíveis; suas colisões correspondentes ficam em `src/market.js`. Edite o PNG/PSD original ou ajuste os recortes em `src/market-art.js`.
+A primeira fase usa uma rua de 4.600 unidades de largura, quase dez telas até o Sacolão. O esgoto, as lajes, as bandeiras e as fachadas são distribuídos ao longo dela. As pranchas `assets cenario fase1.png`, `assets cenario2-1 fase1.png` e `assets cenario3 fase1.png` são usadas como cenários sobrepostos. As casas foram reduzidas para a escala do Luketa; pequenas pranchas da folha `cenario2-1` ficam presas às fachadas como plataformas, com colisões próximas e alinhadas em `src/market.js`. Edite o PNG/PSD original ou ajuste os recortes em `src/market-art.js`.
 
 As camadas exportadas são estáticas: o fundo distante não tem o movimento de profundidade da versão anterior. Plataformas e objetos continuam separados, sobre essas imagens. Pintar uma plataforma no cenário não cria colisão; a geometria permanece em `src/engine.js`, função `createLevel()`.
 

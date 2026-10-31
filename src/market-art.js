@@ -90,17 +90,13 @@
   function background(g,scene){if(EaiAssets.draw(g,'market:'+scene+'-bg',0,0,...sceneSizes[scene]))return;backgroundRaw(g,scene);}
   function streetLandmarks(g){
     const draw=(id,box,x,y,w,h)=>{const im=EaiAssets.images['scenery:'+id];if(im)g.drawImage(im,...box,x,y,w,h);};
-    // Casas da folha cenario2-1: as beiradas desenhadas coincidem com as plataformas físicas.
-    const houses=[
-      [[12,197,310,344],35,30,200,222], [[330,194,420,490],290,10,210,245],
-      [[878,180,294,360],560,24,170,208], [[748,628,752,370],760,28,390,192],
-      [[330,194,420,490],1280,10,210,245], [[12,197,310,344],1578,30,200,222],
-      [[878,180,294,360],1830,24,170,208], [[748,628,752,370],2050,28,390,192],
-      [[330,194,420,490],2575,10,210,245], [[12,197,310,344],2872,30,200,222],
-      [[878,180,294,360],3140,24,170,208], [[748,628,752,370],3360,28,390,192],
-      [[330,194,420,490],3890,10,210,245], [[12,197,310,344],4185,30,200,222]
-    ];
-    for(const [crop,x,y,w,h] of houses)draw('favelaSheet',crop,x,y,w,h);
+    // Casas menores em sequência: as pranchas são anexadas às fachadas e recebem colisão.
+    for(let block=0;block<10;block++){
+      const x=block*450;
+      draw('favelaSheet',[14,244,275,326],x,85,105,125);
+      draw('favelaSheet',[299,245,396,442],x+125,45,140,160);
+      draw('favelaSheet',[750,245,330,310],x+300,50,116,109);
+    }
     draw('stallsSheet',[1238,584,276,239],2380,104,138,120);
   }
   function portal(g,x,y,label,color='#f3d170'){R(g,x-5,y-9,56,37,'#273f35c0');R(g,x-3,y-7,52,33,'#acb49030');T(g,'E',x+21,y+4,10,color,'center');T(g,label,x+21,y+15,5,'#f1e4be','center');}
@@ -135,10 +131,10 @@
     g.save();g.translate(-Math.floor(w.camera),-Math.floor(w.cameraY));
     if(w.scene!=='street')background(g,w.scene==='rescue'?'garage':w.scene==='garage'?'garage-yard':w.scene);
     if(w.scene==='street')streetLandmarks(g);
-    if(!['cart','unloading','rescue','garage'].includes(w.scene))for(const p of w.level.platforms){if(p.x+p.w<w.camera||p.x>w.camera+480)continue;if(w.scene==='street'&&p.h<=20)continue;EaiAssets.tile(g,p.h>20?'ground':'platform',p.x,p.y,p.w,p.h,p.h>20?24:20);}
+    if(!['cart','unloading','rescue','garage'].includes(w.scene))for(const p of w.level.platforms){if(p.x+p.w<w.camera||p.x>w.camera+480)continue;if(w.scene==='street'&&p.h<=20){const sheet=EaiAssets.images['scenery:favelaSheet'],planks=[[56,24,402,28],[62,75,282,25],[60,126,307,26],[63,185,284,27]];if(sheet){const crop=planks[Math.floor(p.x/17)%planks.length];g.drawImage(sheet,...crop,p.x,p.y-3,p.w,12);}continue;}EaiAssets.tile(g,p.h>20?'ground':'platform',p.x,p.y,p.w,p.h,p.h>20?24:20);}
     if(w.scene==='street'){
       R(g,858,222,46,4,'#273f36');for(let x=860;x<902;x+=6)R(g,x,223,2,3,'#90a58b');T(g,'↓ ACESSO AO ESGOTO',880,211,6,'#e7dcac','center');
-      T(g,'BADOQUE ↑',625,45,7,'#ffe6a0','center');
+      T(g,'BADOQUE ↑',355,43,7,'#ffe6a0','center');
       if(Math.abs(w.player.x-880)<70)portal(g,859,181,'ESGOTO');
       if(w.player.x>4260)portal(g,4315,178,w.slingshot?'E • ENTRAR':'BADOQUE',w.slingshot?'#c6e098':'#ef9674');
     }
