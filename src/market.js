@@ -46,7 +46,7 @@
       this.level={index:0,width:480,height:270,platforms:[{x:0,y:224,w:480,h:70}],items:[],enemies:[]};this.bags=[];
       Object.assign(this.player,{x:45,y:197,vx:0,vy:0,grounded:false,slide:0,jumps:0,shoot:0,inv:1});
       if(scene==='street'){
-        this.level.width=4600;const ledges=[];for(let block=0;block<10;block++){const x=block*450;ledges.push([x+3,166,98],[x+9,136,90],[x+128,150,123],[x+134,117,119],[x+140,84,113],[x+146,51,107],[x+302,120,106],[x+306,90,102],[x+310,60,98]);}this.level.platforms=[{x:0,y:224,w:4600,h:70},...ledges.filter(([x])=>x<4450).map(([x,y,w])=>({x,y,w,h:12}))];
+        this.level.width=4600;const ledges=[];for(let block=0;block<10;block++){const x=block*450;ledges.push([x+4,156,94],[x+127,150,133],[x+127,107,133],[x+127,48,116],[x+300,106,112],[x+302,53,94]);}this.level.platforms=[{x:0,y:224,w:4600,h:70},...ledges.filter(([x])=>x<4450).map(([x,y,w])=>({x,y,w,h:12}))];
         this.level.items=[...(!this.slingshot?[item('street-sling','slingshot',345,28)]:[]),item('street-flag-1','flag',207,87),item('street-flag-2','flag',2440,73),item('street-flag-far','flag',3900,60),item('street-juice','juice',1010,207),item('street-juice-middle','juice',2360,207),item('street-juice-last','juice',3670,207)];
         for(const [i,x]of [100,185,230,320,465,590,670,940,1080,1230,1390,1620,1810,2030,2220,2470,2670,2880,3060,3330,3540,3780,3970,4150].entries())this.level.items.push(item('street-can-'+i,'can',x,x<700?(x<150?207:x<300?168:x<465?137:x<625?112:84):x>4150?107:x%2?142:198));
         this.level.enemies=[rival(770),rival(1120),rival(1530),rival(1910),rival(2290),rival(2670),rival(3030),rival(3530),rival(4000)];this.bags=[trash(735),trash(1090),trash(1495),trash(1850),trash(2385),trash(2970),trash(3540),trash(4110)];
