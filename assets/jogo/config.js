@@ -31,7 +31,7 @@ window.EaiAssetConfig = {
 };
 window.EaiAssetConfig.scenery = {
   marketSheet:'../personagens/assets cenario fase1.png',
-  favelaSheet:'../personagens/assets cenario2 fase1.png',
+  favelaSheet:'../personagens/assets cenario2-1 fase1.png',
   stallsSheet:'../personagens/assets cenario3 fase1.png'
 };
 // Novas áreas do Mercado. PNG e WebP podem ser usados nesses mesmos caminhos.

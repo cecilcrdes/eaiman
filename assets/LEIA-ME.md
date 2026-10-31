@@ -40,7 +40,7 @@ Em **jogo/cenarios/** há duas camadas por fase:
 
 Nomes: market = Mercado; alley = Beco; field = Campinho; school = Escola; rooftop = Topo do Morro.
 
-A primeira fase usa uma rua de 4.600 unidades de largura, quase dez telas até o Sacolão. O esgoto, as lajes, as bandeiras e as fachadas são distribuídos ao longo dela. As pranchas novas `assets cenario fase1.png`, `assets cenario2 fase1.png` e `assets cenario3 fase1.png` são usadas como cenários sobrepostos; edite as pranchas originais ou ajuste os recortes em `src/market-art.js`.
+A primeira fase usa uma rua de 4.600 unidades de largura, quase dez telas até o Sacolão. O esgoto, as lajes, as bandeiras e as fachadas são distribuídos ao longo dela. As pranchas `assets cenario fase1.png`, `assets cenario2-1 fase1.png` e `assets cenario3 fase1.png` são usadas como cenários sobrepostos. As casas de `cenario2-1` formam as plataformas visíveis; suas colisões correspondentes ficam em `src/market.js`. Edite o PNG/PSD original ou ajuste os recortes em `src/market-art.js`.
 
 As camadas exportadas são estáticas: o fundo distante não tem o movimento de profundidade da versão anterior. Plataformas e objetos continuam separados, sobre essas imagens. Pintar uma plataforma no cenário não cria colisão; a geometria permanece em `src/engine.js`, função `createLevel()`.
 
@@ -87,4 +87,4 @@ O combate de Maneco usa o fundo adicional jogo/mercado/garage-yard-bg.png (960 �
 
 ## Pranchas de cenário novas
 
-As pranchas `personagens/assets cenario fase1.png`, `personagens/assets cenario2 fase1.png` e `personagens/assets cenario3 fase1.png` permanecem originais e alimentam as fachadas da rua longa. A composição por recortes está em `src/market-art.js`, na função `streetLandmarks()`. `personagens/Folha de sprites tuca.png` alimenta a personagem jogável Tuca; `personagens/Sprite teca fase1.png` alimenta a chefe Teca. Os recortes editáveis ficam em `jogo/animacoes.js` e `tools/map-character-atlases.py`.
+As pranchas `personagens/assets cenario fase1.png`, `personagens/assets cenario2-1 fase1.png` e `personagens/assets cenario3 fase1.png` permanecem originais e alimentam as fachadas da rua longa. A composição por recortes está em `src/market-art.js`, na função `streetLandmarks()`; as plataformas físicas das casas são ajustadas em `src/market.js`. `personagens/Folha de sprites tuca.png` alimenta a personagem jogável Tuca; `personagens/Sprite teca fase1.png` alimenta a chefe Teca. Os recortes editáveis ficam em `jogo/animacoes.js` e `tools/map-character-atlases.py`.
