@@ -90,14 +90,13 @@
   function background(g,scene){if(EaiAssets.draw(g,'market:'+scene+'-bg',0,0,...sceneSizes[scene]))return;backgroundRaw(g,scene);}
   function streetLandmarks(g){
     const draw=(id,box,x,y,w,h)=>{const im=EaiAssets.images['scenery:'+id];if(im)g.drawImage(im,...box,x,y,w,h);};
-    // Casas menores em sequência: as marquises e beiradas originais recebem colisão.
+    // Casas completas da folha enviada, em sequência e sem sobrepor fachadas.
     for(let block=0;block<11;block++){
       const x=block*420;
-      draw('favelaSheet',[14,244,275,326],x,85,125,148);
-      draw('favelaSheet',[299,245,396,442],x+105,40,160,179);
-      draw('favelaSheet',[750,245,330,310],x+245,50,132,124);
+      draw('favelaSheet',[14,244,275,326],x,94,110,130);
+      draw('favelaSheet',[299,245,396,442],x+110,56,158,168);
+      draw('favelaSheet',[750,245,330,190],x+270,148,132,76);
     }
-    draw('stallsSheet',[1238,584,276,239],2380,104,138,120);
   }
   function parallax(g,camera){
     const im=EaiAssets.images['scenery:marketParallax'];if(!im)return;
@@ -140,8 +139,6 @@
     if(w.scene==='street'){
       EaiArt.sky(g,0,w.camera,t);
       parallax(g,w.camera);
-      if(EaiAssets.draw(g,'market:street',-Math.floor(w.camera),0,2400,270))EaiAssets.draw(g,'market:street',2400-Math.floor(w.camera),0,2400,270);
-      else EaiArt.foreground(g,0,w.camera,t);
     }
     else R(g,0,0,480,270,'#243c32');
     g.save();g.translate(-Math.floor(w.camera),-Math.floor(w.cameraY));
