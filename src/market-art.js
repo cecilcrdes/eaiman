@@ -91,11 +91,11 @@
   function streetLandmarks(g){
     const draw=(id,box,x,y,w,h)=>{const im=EaiAssets.images['scenery:'+id];if(im)g.drawImage(im,...box,x,y,w,h);};
     // Casas menores em sequência: as marquises e beiradas originais recebem colisão.
-    for(let block=0;block<10;block++){
-      const x=block*450;
-      draw('favelaSheet',[14,244,275,326],x,85,105,125);
-      draw('favelaSheet',[299,245,396,442],x+125,45,140,160);
-      draw('favelaSheet',[750,245,330,310],x+300,50,116,109);
+    for(let block=0;block<11;block++){
+      const x=block*420;
+      draw('favelaSheet',[14,244,275,326],x,85,125,148);
+      draw('favelaSheet',[299,245,396,442],x+105,40,160,179);
+      draw('favelaSheet',[750,245,330,310],x+245,50,132,124);
     }
     draw('stallsSheet',[1238,584,276,239],2380,104,138,120);
   }
