@@ -49,11 +49,11 @@
         const assets=typeof EaiAssets==='undefined'?null:EaiAssets,markers=assets?.layoutMarkers||{},layout=assets?.images?.['scenery:marketLayout'],scale=.5,top=400;
         this.level.width=(layout?.width||6000)*scale;
         const ledges=(markers.platforms||[]).filter(m=>m.y>=top&&m.y<top+448).map(m=>({x:m.x*scale,y:(m.y-top)*scale,w:m.w*scale,h:8}));
-        this.level.platforms=[{x:0,y:224,w:this.level.width,h:70},...ledges];
-        const markerItems=(markers.items||[]).filter(m=>m.y>=top&&m.y<top+448);
         const slingMarker=(markers.items||[]).find(m=>m.y<top&&m.x>(layout?.width||6000)*.35&&m.x<(layout?.width||6000)*.5);
-        const slingX=slingMarker?slingMarker.x*scale:345;
-        this.level.items=[...(!this.slingshot?[item('street-sling','slingshot',clamp(slingX,this.level.width*.2,this.level.width-28),8)]:[]),item('street-flag-1','flag',180,150),item('street-flag-2','flag',1450,95),item('street-flag-far','flag',this.level.width-230,120),item('street-juice','juice',570,207),item('street-juice-middle','juice',this.level.width*.56,207),item('street-juice-last','juice',this.level.width*.86,207)];
+        const slingX=slingMarker?slingMarker.x*scale:345,bridgeX=clamp(slingX-55,0,this.level.width-125);
+        this.level.platforms=[{x:0,y:224,w:this.level.width,h:70},...ledges,{x:bridgeX,y:154,w:125,h:8,marketBridge:true}];
+        const markerItems=(markers.items||[]).filter(m=>m.y>=top&&m.y<top+448);
+        this.level.items=[...(!this.slingshot?[item('street-sling','slingshot',clamp(slingX,this.level.width*.2,this.level.width-28),43)]:[]),item('street-flag-1','flag',180,150),item('street-flag-2','flag',1450,95),item('street-flag-far','flag',this.level.width-230,120),item('street-juice','juice',570,207),item('street-juice-middle','juice',this.level.width*.56,207),item('street-juice-last','juice',this.level.width*.86,207)];
         for(const [i,m]of markerItems.entries())this.level.items.push(item('street-layout-item-'+i,'can',m.x*scale+m.w*scale/2-6,clamp((m.y+m.h/2-top)*scale-7,8,207)));
         const enemyMarkers=(markers.enemies||[]).filter(m=>m.y>=top&&m.y<top+500);
         this.level.enemies=enemyMarkers.map(m=>{const e=rival(m.x*scale+m.w*scale/2-8);e.y=clamp((m.y+m.h-top)*scale-e.h,80,198);return e;});

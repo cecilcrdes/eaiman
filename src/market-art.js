@@ -134,10 +134,10 @@
     g.save();g.translate(-Math.floor(w.camera),-Math.floor(w.cameraY));
     if(w.scene!=='street')background(g,w.scene==='rescue'?'garage':w.scene==='garage'?'garage-yard':w.scene);
     if(w.scene==='street'){streetLandmarks(g);streetGround(g,w);}
-    if(!['cart','unloading','rescue','garage'].includes(w.scene))for(const p of w.level.platforms){if(p.x+p.w<w.camera||p.x>w.camera+480)continue;if(w.scene==='street')continue;EaiAssets.tile(g,p.h>20?'ground':'platform',p.x,p.y,p.w,p.h,p.h>20?24:20);}
+    if(!['cart','unloading','rescue','garage'].includes(w.scene))for(const p of w.level.platforms){if(p.x+p.w<w.camera||p.x>w.camera+480)continue;if(w.scene==='street'){if(p.marketBridge)EaiAssets.tile(g,'platform',p.x,p.y,p.w,p.h,20);continue;}EaiAssets.tile(g,p.h>20?'ground':'platform',p.x,p.y,p.w,p.h,p.h>20?24:20);}
     if(w.scene==='street'){
       R(g,858,222,46,4,'#273f36');for(let x=860;x<902;x+=6)R(g,x,223,2,3,'#90a58b');T(g,'↓ ACESSO AO ESGOTO',880,211,6,'#e7dcac','center');
-      T(g,'BADOQUE ↑',Math.min(1285,w.level.width-60),43,7,'#ffe6a0','center');
+      T(g,'BADOQUE ↑',Math.min(1285,w.level.width-60),28,7,'#ffe6a0','center');
       if(Math.abs(w.player.x-880)<70)portal(g,859,181,'ESGOTO');
       if(w.player.x>w.level.width-190)portal(g,w.level.width-150,178,w.slingshot?'E • ENTRAR':'BADOQUE',w.slingshot?'#c6e098':'#ef9674');
     }
