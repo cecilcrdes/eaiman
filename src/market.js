@@ -230,7 +230,7 @@
       const p=this.player;if(!input.interact||this.prev.interact)return;
       if(this.scene==='street'){
         if(Math.abs(p.x-880)<50&&p.y>165){this.enter('sewer');return;}
-        if(p.x>4340){if(!this.slingshot){this.hint('O Sacolão está fechado! Volte à laje e pegue o badogue.');return;}this.enter('cart');this.setCheckpoint(false);return;}
+        if(p.x>this.level.width-160){if(!this.slingshot){this.hint('O Sacolão está fechado! Volte à laje e pegue o badogue.');return;}this.enter('cart');this.setCheckpoint(false);return;}
       }
       if(this.scene==='sewer'&&p.x>60&&p.x<220&&p.y<175){this.enter('street',true);return;}
       if(this.scene==='unloading'&&this.stageTime>=22&&p.x>390){this.enter('garage');this.setCheckpoint(true);}
