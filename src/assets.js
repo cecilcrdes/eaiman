@@ -9,9 +9,27 @@
   for(const [theme,scene] of Object.entries(config.scenes))for(const [part,src] of Object.entries(scene))if(typeof src==='string')entries.push([theme+':'+part,src]);
   for(const [id,src] of Object.entries(config.objects))entries.push([id,src]);
   for(const [id,src] of Object.entries(config.market||{}))entries.push(['market:'+id,src]);
+  const layoutMarkers={platforms:[],items:[],enemies:[]};
+  function prepareMarketLayout(img){
+    const canvas=document.createElement('canvas');canvas.width=img.naturalWidth;canvas.height=img.naturalHeight;
+    const g=canvas.getContext('2d',{willReadFrequently:true});g.drawImage(img,0,0);const frame=g.getImageData(0,0,canvas.width,canvas.height),pixels=frame.data,total=canvas.width*canvas.height,seen=new Uint8Array(total),queue=new Int32Array(total);
+    const category=i=>{const p=i*4,r=pixels[p],v=pixels[p+1],b=pixels[p+2];return v>245&&r<24&&b<48?1:b>240&&r<85&&v<30?2:r>240&&v<35&&b<35?3:0;};
+    for(let i=0;i<total;i++){const kind=category(i);if(!kind)continue;pixels[i*4+3]=0;if(seen[i])continue;
+      let head=0,tail=0,minX=canvas.width,maxX=0,minY=canvas.height,maxY=0,area=0;queue[tail++]=i;seen[i]=1;
+      while(head<tail){const n=queue[head++],x=n%canvas.width,y=(n-x)/canvas.width;area++;minX=Math.min(minX,x);maxX=Math.max(maxX,x);minY=Math.min(minY,y);maxY=Math.max(maxY,y);
+        const add=m=>{if(m<0||m>=total||seen[m]||category(m)!==kind)return;seen[m]=1;pixels[m*4+3]=0;queue[tail++]=m;};
+        if(x)add(n-1);if(x+1<canvas.width)add(n+1);if(y)add(n-canvas.width);if(y+1<canvas.height)add(n+canvas.width);
+      }
+      const box={x:minX,y:minY,w:maxX-minX+1,h:maxY-minY+1,area};
+      if(kind===1&&area>220&&box.w>24)layoutMarkers.platforms.push(box);
+      else if(kind===2&&area>60)layoutMarkers.items.push(box);
+      else if(kind===3&&area>160&&box.h>14)layoutMarkers.enemies.push(box);
+    }
+    g.putImageData(frame,0,0);return canvas;
+  }
   const ready=Promise.all(entries.map(([id,src])=>new Promise(resolve=>{
     const img=new Image();
-    img.onload=()=>{images[id]=img;resolve();};
+    img.onload=()=>{images[id]=id==='scenery:marketLayout'?prepareMarketLayout(img):img;resolve();};
     img.onerror=()=>{errors.push(src);console.warn('Asset indisponível; usando desenho de reserva:',src);resolve();};
     img.src='assets/jogo/'+src;
   })));
@@ -35,5 +53,5 @@
     return true;
   }
   function tile(g,id,x,y,w,h,tileWidth){const img=images[id];if(!img)return false;for(let off=0;off<w;off+=tileWidth){const width=Math.min(tileWidth,w-off);g.drawImage(img,0,0,img.naturalWidth*width/tileWidth,img.naturalHeight,x+off,y,width,h);}return true;}
-  window.EaiAssets={config,images,errors,ready,draw,sheet,tile,character};
+  window.EaiAssets={config,images,errors,ready,layoutMarkers,draw,sheet,tile,character};
 })();
