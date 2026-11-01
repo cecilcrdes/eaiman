@@ -29,9 +29,12 @@ window.EaiAssetConfig = {
   objects: {ground:'objetos/chao.png',platform:'objetos/plataforma.png',crate:'objetos/caixa.png',can:'objetos/latinha.png',juice:'objetos/suco.png',bread:'objetos/sonho.png',fruit:'objetos/fruta.png',cat:'objetos/juca.png'}
 };
 window.EaiAssetConfig.scenery = {
-  marketLayout:'../personagens/packcasas_fase1.png',
+  marketSheet:'../personagens/assets cenario fase1.png',
+  favelaSheet:'../personagens/assets cenario2-1 fase1.png',
+  stallsSheet:'../personagens/assets cenario3 fase1.png',
   marketParallax:'../personagens/assetsparallax.png',
   marketGround:'../personagens/assets_chao.png',
+  streetPosts:'../personagens/assetspostes.png',
   schoolInterior:'../personagens/assets fase 2.png'
 };
 // Novas áreas do Mercado. PNG e WebP podem ser usados nesses mesmos caminhos.
