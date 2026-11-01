@@ -90,28 +90,18 @@
   function background(g,scene){if(EaiAssets.draw(g,'market:'+scene+'-bg',0,0,...sceneSizes[scene]))return;backgroundRaw(g,scene);}
   function streetLandmarks(g){
     const draw=(id,box,x,y,w,h)=>{const im=EaiAssets.images['scenery:'+id];if(im)g.drawImage(im,...box,x,y,w,h);};
-    // Fachadas recortadas dos assets originais, organizadas sem usar o pack de referência.
-    for(let block=0;block<10;block++){
-      const x=block*420;
-      draw('favelaSheet',[14,244,275,326],x,94,110,130);
-      draw('favelaSheet',[299,245,396,442],x+110,46,158,178);
-      draw('favelaSheet',[750,24,330,190],x+270,148,132,76);
+    // Casas menores em sequência: as marquises e beiradas originais recebem colisão.
+    for(let block=0;block<9;block++){
+      const x=block*450;
+      draw('favelaSheet',[14,244,275,326],x,95,105,125);
+      draw('favelaSheet',[299,245,396,442],x+125,45,140,160);
+      // Montagem da casa amarela com os recortes atualizados da folha.
+      draw('favelaSheet',[750,24,330,190],x+300,50,116,67);
+      draw('favelaSheet',[750,228,330,120],x+300,117,116,42);
+      draw('favelaSheet',[806,547,270,149],x+300,159,116,64);
     }
-    draw('marketSheet',[1080,42,348,505],3320,4,150,220);
-    draw('marketSheet',[1430,18,350,525],3500,4,147,220);
-    draw('marketSheet',[1785,24,370,520],3685,4,156,220);
-    // A fachada completa mantém a entrada do Sacolão visível no fim da rua.
+    draw('stallsSheet',[1238,584,276,239],2380,104,138,120);
     draw('marketSheet',[25,0,1005,515],4150,2,430,222);
-  }
-  function parallax(g,camera){
-    const im=EaiAssets.images['scenery:marketParallax'];if(!im)return;
-    const width=480,height=270,offset=-((camera*.12)%width);
-    for(let x=offset-width;x<width*2;x+=width)g.drawImage(im,x,0,width,height);
-  }
-  function streetGround(g,w){
-    const im=EaiAssets.images['scenery:marketGround'];if(!im)return;
-    const start=Math.floor(w.camera/480)*480-480;
-    for(let x=start;x<w.camera+960;x+=480)g.drawImage(im,x,6,480,270);
   }
   function portal(g,x,y,label,color='#f3d170'){R(g,x-5,y-9,56,37,'#273f35c0');R(g,x-3,y-7,52,33,'#acb49030');T(g,'E',x+21,y+4,10,color,'center');T(g,label,x+21,y+15,5,'#f1e4be','center');}
   function hazards(g,w,behind=false){
@@ -138,18 +128,19 @@
     g.imageSmoothingEnabled=!!EaiAssets.config.smooth;
     if(w.scene==='street'){
       EaiArt.sky(g,0,w.camera,t);
-      parallax(g,w.camera);
+      if(EaiAssets.draw(g,'market:street',-Math.floor(w.camera),0,2400,270))EaiAssets.draw(g,'market:street',2400-Math.floor(w.camera),0,2400,270);
+      else EaiArt.foreground(g,0,w.camera,t);
     }
     else R(g,0,0,480,270,'#243c32');
     g.save();g.translate(-Math.floor(w.camera),-Math.floor(w.cameraY));
     if(w.scene!=='street')background(g,w.scene==='rescue'?'garage':w.scene==='garage'?'garage-yard':w.scene);
-    if(w.scene==='street'){streetPosts(g,w);streetLandmarks(g);streetGround(g,w);}
-    if(!['cart','unloading','rescue','garage'].includes(w.scene))for(const p of w.level.platforms){if(p.x+p.w<w.camera||p.x>w.camera+480)continue;if(w.scene==='street')continue;EaiAssets.tile(g,p.h>20?'ground':'platform',p.x,p.y,p.w,p.h,p.h>20?24:20);}
+    if(w.scene==='street')streetLandmarks(g);
+    if(!['cart','unloading','rescue','garage'].includes(w.scene))for(const p of w.level.platforms){if(p.x+p.w<w.camera||p.x>w.camera+480)continue;if(w.scene==='street'&&p.h<=20)continue;EaiAssets.tile(g,p.h>20?'ground':'platform',p.x,p.y,p.w,p.h,p.h>20?24:20);}
     if(w.scene==='street'){
       R(g,858,222,46,4,'#273f36');for(let x=860;x<902;x+=6)R(g,x,223,2,3,'#90a58b');T(g,'↓ ACESSO AO ESGOTO',880,211,6,'#e7dcac','center');
-      T(g,'BADOQUE ↑',345,106,7,'#ffe6a0','center');
+      T(g,'BADOQUE ↑',355,43,7,'#ffe6a0','center');
       if(Math.abs(w.player.x-880)<70)portal(g,859,181,'ESGOTO');
-      if(w.player.x>w.level.width-330)portal(g,w.level.width-285,178,w.slingshot?'E • SACOLÃO':'BADOQUE',w.slingshot?'#c6e098':'#ef9674');
+      if(w.player.x>4260)portal(g,4315,178,w.slingshot?'E • ENTRAR':'BADOQUE',w.slingshot?'#c6e098':'#ef9674');
     }
     if(w.scene==='sewer'){portal(g,98,110,'VOLTAR À RUA');obj(g,'trash',18,540,24,28);}
     for(const it of w.level.items){if(it.taken)continue;const y=it.y+Math.sin(t*3+it.x)*2;
