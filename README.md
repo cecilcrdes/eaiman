@@ -24,10 +24,9 @@ Abra **cecilcrdes.github.io/eaiman.** no navegador. Para um endereço local est�
 ## Campanha
 
 1. O Mercado — Seu Maneco; libera Tuca, que corre mais rápido.
-2. Beco das Valeskas — Juju Chiclete; libera Jana, que tem pulo duplo.
+2. Escola Pública — Chumbinho; libera Jana, que tem pulo duplo.
 3. O Campinho — Talinho; libera Lea, que pula mais alto.
-4. A Escola — Chumbinho.
-5. Topo do Morro — Vadinho; encerra a história.
+4. Topo do Morro — Vadinho; encerra a história.
 
 
 
@@ -49,7 +48,7 @@ Abra **cecilcrdes.github.io/eaiman.** no navegador. Para um endereço local est�
 - `tests/engine.test.cjs` e `tests/market.test.cjs`: 24 testes de mecânicas (`npm test`).
 - `tests/browser.cjs`, `tests/market-browser.cjs` e `tests/assets-browser.cjs`: verificações opcionais de interface, exigem Playwright e Chrome.
 
-O projeto é uma adaptação jogável do material fornecido, e não uma reprodução integral de todas as mecânicas do GDD. A ordem dos resgates e os talentos foram definidos para atender à seleção dos quatro personagens. Escalada de paredes, caixas empurráveis, fabricação por receitas e fases com layouts finais de produção não fazem parte desta versão. O Mercado usa áreas e encontros próprios. As quatro fases seguintes ainda compartilham a base de plataformas da primeira versão. A descarga tem uma primeira implementação de caminhões e caixas deslizantes, aberta a refinamento conforme o briefing.
+O projeto é uma adaptação jogável do material fornecido, e não uma reprodução integral de todas as mecânicas do GDD. A ordem dos resgates e os talentos foram definidos para atender à seleção dos quatro personagens. Escalada de paredes, caixas empurráveis, fabricação por receitas e fases com layouts finais de produção não fazem parte desta versão. O Mercado usa áreas e encontros próprios. As outras três fases ainda compartilham a base de plataformas da primeira versão. A descarga tem uma primeira implementação de caminhões e caixas deslizantes, aberta a refinamento conforme o briefing.
 
 ## Créditos
 

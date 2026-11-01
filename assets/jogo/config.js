@@ -22,7 +22,6 @@ window.EaiAssetConfig = {
   },
   scenes: {
     market: {sky:'cenarios/market-ceu.png',street:'cenarios/market-rua.png',rival:'inimigos/market-rival-sheet.png',boss:'inimigos/market-chefe.png',flag:'objetos/bandeira-market.png'},
-    alley: {sky:'cenarios/alley-ceu.png',street:'cenarios/alley-rua.png',rival:'inimigos/alley-rival-sheet.png',boss:'inimigos/alley-boss-sheet.png',flag:'objetos/bandeira-alley.png'},
     field: {sky:'cenarios/field-ceu.png',street:'cenarios/field-rua.png',rival:'inimigos/field-rival-sheet.png',boss:'inimigos/field-boss-sheet.png',flag:'objetos/bandeira-field.png'},
     school: {sky:'cenarios/school-ceu.png',street:'cenarios/school-rua.png',rival:'inimigos/school-rival-sheet.png',boss:'inimigos/school-boss-sheet.png',flag:'objetos/bandeira-school.png'},
     rooftop: {sky:'cenarios/rooftop-ceu.png',street:'cenarios/rooftop-rua.png',rival:'inimigos/rooftop-rival-sheet.png',boss:'inimigos/rooftop-boss-sheet.png',flag:'objetos/bandeira-rooftop.png'}
@@ -32,7 +31,11 @@ window.EaiAssetConfig = {
 window.EaiAssetConfig.scenery = {
   marketSheet:'../personagens/assets cenario fase1.png',
   favelaSheet:'../personagens/assets cenario2-1 fase1.png',
-  stallsSheet:'../personagens/assets cenario3 fase1.png'
+  stallsSheet:'../personagens/assets cenario3 fase1.png',
+  marketParallax:'../personagens/assetsparallax.png',
+  marketGround:'../personagens/assets_chao.png',
+  streetPosts:'../personagens/assetspostes.png',
+  schoolInterior:'../personagens/assets fase 2.png'
 };
 // Novas áreas do Mercado. PNG e WebP podem ser usados nesses mesmos caminhos.
 window.EaiAssetConfig.market = {

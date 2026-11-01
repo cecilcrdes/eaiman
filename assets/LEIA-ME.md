@@ -29,7 +29,7 @@ Desenhe voltado para a direita; o jogo espelha a imagem para a esquerda. O centr
 
 Em **jogo/inimigos/**, as folhas `*-rival-sheet.png` e `*-boss-sheet.png` foram copiadas das referências originais para facilitar a edição. Cada folha detalhada tem **1536 × 1024 px**, organizada em **16 colunas × 4 linhas** (quadros de 96 × 256 px); o jogo usa a segunda linha para animar a corrida. Maneco usa `market-chefe.png`, a folha menor de **640 × 96 px**, organizada em 8 quadros horizontais. As folhas antigas também foram preservadas. Substitua os arquivos mantendo o nome, as dimensões e a grade para atualizar os inimigos no jogo.
 
-Os vínculos seguem as cores das equipes descritas no GDD: vermelho no Mercado, rosa no Beco, azul no Campinho, verde na Escola e roxo no Topo do Morro. Algumas folhas de origem são duplicatas exatas, e não há artes identificadas por nome para Juju, Talinho, Chumbinho ou Vadinho; os chefes dessas fases usam sprites da equipe correspondente. Maneco ainda usa o sprite de reserva do projeto, pois não foi encontrada uma folha exclusiva dele. O Topo usa a folha roxa disponível como base; o acervo não tem uma folha marcada especificamente como fase 5.
+Os vínculos seguem as cores das equipes descritas no GDD: vermelho no Mercado, verde na Escola Pública, azul no Campinho e roxo no Topo do Morro. Algumas folhas de origem são duplicatas exatas, e não há artes identificadas por nome para Talinho, Chumbinho ou Vadinho; os chefes dessas fases usam sprites da equipe correspondente. Maneco ainda usa o sprite de reserva do projeto, pois não foi encontrada uma folha exclusiva dele. O Topo usa a folha roxa disponível como base.
 
 ## Cenários
 
@@ -38,11 +38,11 @@ Em **jogo/cenarios/** há duas camadas por fase:
 - `*-ceu.png`: **960 × 540 px**. Fundo distante, fixo na tela.
 - `*-rua.png`: **4800 × 540 px**, com transparência. Fachadas e decoração que acompanham a câmera. A superfície do chão fica em y=448.
 
-Nomes: market = Mercado; alley = Beco; field = Campinho; school = Escola; rooftop = Topo do Morro.
+Nomes: market = Mercado; school = Escola Pública; field = Campinho; rooftop = Topo do Morro. As antigas folhas do Beco permanecem arquivadas, mas já não fazem parte da campanha.
 
 A primeira fase usa uma rua de 4.600 unidades de largura, quase dez telas até o Sacolão. O esgoto, as lajes, as bandeiras e as fachadas são distribuídos ao longo dela. As pranchas `assets cenario fase1.png`, `assets cenario2-1 fase1.png` e `assets cenario3 fase1.png` são usadas como cenários sobrepostos. As casas foram reduzidas para a escala do Luketa; as marquises e beiradas originais formam as plataformas, com colisões ajustadas para ficarem sobre essas estruturas em `src/market.js`. Edite o PNG/PSD original ou ajuste os recortes em `src/market-art.js`.
 
-As camadas exportadas são estáticas: o fundo distante não tem o movimento de profundidade da versão anterior. Plataformas e objetos continuam separados, sobre essas imagens. Pintar uma plataforma no cenário não cria colisão; a geometria permanece em `src/engine.js`, função `createLevel()`.
+O Mercado usa `personagens/assetsparallax.png` como fundo distante com rolagem lenta, `personagens/assets_chao.png` no piso e `personagens/assetspostes.png` nos postes da rua. Os três PNGs têm **1672 × 941 px**. A Escola Pública usa os corredores do atlas `personagens/assets fase 2.png` (**1536 × 1024 px**). As colisões permanecem separadas das imagens.
 
 ## Objetos
 

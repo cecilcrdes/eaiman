@@ -8,17 +8,16 @@
   ];
   const LEVELS = [
     {name:'O Mercado',area:'FEIRINHA DA COMUNIDADE',boss:'Seu Maneco',team:'Turma da Rua de Baixo',color:'#d66a48',sky:'#a8cbc0',light:'#f3d989',theme:'market',rescue:1,story:'Atravesse a longa rua da comunidade. Pegue o badoque na laje, explore o esgoto secreto, passe pelo Sacolão e vença Teca, Neymar e Seu Maneco para resgatar Tuca.'},
-    {name:'Beco das Valeskas',area:'RITMO NOS BECOS',boss:'Juju Chiclete',team:'Valeskas',color:'#d77a9b',sky:'#b7b8cb',light:'#efd6a4',theme:'alley',rescue:2,story:'Tuca ouviu Jana no beco do salão Grande Beleza. Juju Chiclete só vai abrir caminho depois de perder suas bandeiras.'},
+    {name:'Escola Pública',area:'PÁTIO DA ESCOLA',boss:'Chumbinho',team:'Meninos do Morro',color:'#81a16a',sky:'#e0bb9a',light:'#f5d78f',theme:'school',rescue:2,story:'Jana está escondida na Escola Pública. Atravesse os corredores, reúna as bandeiras e enfrente Chumbinho e os Meninos do Morro para libertá-la.'},
     {name:'O Campinho',area:'BOLA NO PÉ, OLHO NAS PISTAS',boss:'Talinho',team:'Os Craques',color:'#5d9cba',sky:'#9cc8cd',light:'#f6e4a8',theme:'field',rescue:3,story:'Lea está no campinho da Pocinha. Enfrente os Craques e Talinho para reunir os quatro Canários.'},
-    {name:'A Escola',area:'DE VOLTA AO PÁTIO',boss:'Chumbinho',team:'Meninos do Morro',color:'#81a16a',sky:'#e0bb9a',light:'#f5d78f',theme:'school',rescue:null,story:'Bento encontrou a pista final no pátio. A equipe de Chumbinho bloqueia a subida. Mostre a força dos Canários!'},
     {name:'Topo do Morro',area:'A ÚLTIMA ESTRELA',boss:'Vadinho',team:'Equipe do Topo',color:'#a38abe',sky:'#8c9cae',light:'#ecc58f',theme:'rooftop',rescue:null,story:'A Batalha das Estrelas termina lá em cima. Reúna as últimas bandeiras e conquiste o morro com a sua equipe.'}
   ];
   const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
   const overlap=(a,b)=>a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;
   function cleanSave(raw){
     const n=(v,max)=>Number.isFinite(v)?clamp(Math.floor(v),0,max):0;
-    const completed=n(raw?.completed,5);
-    return {completed,selected:n(raw?.selected,3),cans:n(raw?.cans,99999),power:n(raw?.power,2),armor:n(raw?.armor,1),magnet:n(raw?.magnet,1),badogue:raw?.badogue===true||completed>0,best:Array.from({length:5},(_,i)=>n(raw?.best?.[i],999999)),achievements:Array.isArray(raw?.achievements)?[...new Set(raw.achievements.filter(a=>['sewer','flags','mariana','neymar','maneco'].includes(a)))]:[],marketCheckpoint:root.EaiMarket?.cleanCheckpoint(raw?.marketCheckpoint)||null};
+    const completed=n(raw?.completed,LEVELS.length),oldBest=raw?.best||[],bestOrder=raw?.campaignVersion===2?[0,1,2,3]:[0,3,2,4];
+    return {campaignVersion:2,completed,selected:n(raw?.selected,3),cans:n(raw?.cans,99999),power:n(raw?.power,2),armor:n(raw?.armor,1),magnet:n(raw?.magnet,1),badogue:raw?.badogue===true||completed>0,best:Array.from({length:LEVELS.length},(_,i)=>n(oldBest[bestOrder[i]],999999)),achievements:Array.isArray(raw?.achievements)?[...new Set(raw.achievements.filter(a=>['sewer','flags','mariana','neymar','maneco'].includes(a)))]:[],marketCheckpoint:root.EaiMarket?.cleanCheckpoint(raw?.marketCheckpoint)||null};
   }
   function createLevel(index){
     const platforms=[{x:0,y:224,w:760,h:70},{x:824,y:224,w:640,h:70},{x:1536,y:224,w:864,h:70}];

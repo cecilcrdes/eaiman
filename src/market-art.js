@@ -99,6 +99,21 @@
     }
     draw('stallsSheet',[1238,584,276,239],2380,104,138,120);
   }
+  function parallax(g,camera){
+    const im=EaiAssets.images['scenery:marketParallax'];if(!im)return;
+    const width=480,height=270,offset=-((camera*.12)%width);
+    for(let x=offset-width;x<width*2;x+=width)g.drawImage(im,x,0,width,height);
+  }
+  function streetPosts(g,w){
+    const im=EaiAssets.images['scenery:streetPosts'];if(!im)return;
+    const source=[42,205,180,565];
+    for(let x=480;x<w.level.width;x+=840)g.drawImage(im,...source,x,111,36,113);
+  }
+  function streetGround(g,w){
+    const im=EaiAssets.images['scenery:marketGround'];if(!im)return;
+    const start=Math.floor(w.camera/480)*480-480;
+    for(let x=start;x<w.camera+960;x+=480)g.drawImage(im,x,6,480,270);
+  }
   function portal(g,x,y,label,color='#f3d170'){R(g,x-5,y-9,56,37,'#273f35c0');R(g,x-3,y-7,52,33,'#acb49030');T(g,'E',x+21,y+4,10,color,'center');T(g,label,x+21,y+15,5,'#f1e4be','center');}
   function hazards(g,w,behind=false){
     for(const h of w.hazards){
@@ -124,14 +139,15 @@
     g.imageSmoothingEnabled=!!EaiAssets.config.smooth;
     if(w.scene==='street'){
       EaiArt.sky(g,0,w.camera,t);
+      parallax(g,w.camera);
       if(EaiAssets.draw(g,'market:street',-Math.floor(w.camera),0,2400,270))EaiAssets.draw(g,'market:street',2400-Math.floor(w.camera),0,2400,270);
       else EaiArt.foreground(g,0,w.camera,t);
     }
     else R(g,0,0,480,270,'#243c32');
     g.save();g.translate(-Math.floor(w.camera),-Math.floor(w.cameraY));
     if(w.scene!=='street')background(g,w.scene==='rescue'?'garage':w.scene==='garage'?'garage-yard':w.scene);
-    if(w.scene==='street')streetLandmarks(g);
-    if(!['cart','unloading','rescue','garage'].includes(w.scene))for(const p of w.level.platforms){if(p.x+p.w<w.camera||p.x>w.camera+480)continue;if(w.scene==='street'&&p.h<=20)continue;EaiAssets.tile(g,p.h>20?'ground':'platform',p.x,p.y,p.w,p.h,p.h>20?24:20);}
+    if(w.scene==='street'){streetPosts(g,w);streetLandmarks(g);streetGround(g,w);}
+    if(!['cart','unloading','rescue','garage'].includes(w.scene))for(const p of w.level.platforms){if(p.x+p.w<w.camera||p.x>w.camera+480)continue;if(w.scene==='street')continue;EaiAssets.tile(g,p.h>20?'ground':'platform',p.x,p.y,p.w,p.h,p.h>20?24:20);}
     if(w.scene==='street'){
       R(g,858,222,46,4,'#273f36');for(let x=860;x<902;x+=6)R(g,x,223,2,3,'#90a58b');T(g,'↓ ACESSO AO ESGOTO',880,211,6,'#e7dcac','center');
       T(g,'BADOQUE ↑',355,43,7,'#ffe6a0','center');
