@@ -30,6 +30,8 @@ window.EaiAssetConfig = {
 };
 window.EaiAssetConfig.scenery = {
   marketSheet:'../personagens/assets cenario fase1.png',
+  marketHouses:'../personagens/cenario_fase1_casas.png',
+  marketFloorPanorama:'../personagens/cenario_fase1_chao.png',
   favelaSheet:'../personagens/assets cenario2-1 fase1.png',
   stallsSheet:'../personagens/assets cenario3 fase1.png',
   marketParallax:'../personagens/assetsparallax.png',

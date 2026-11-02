@@ -89,6 +89,14 @@
   function obj(g,id,x,y,w,h){if(EaiAssets.draw(g,'market:'+id,x,y,w,h))return;g.save();g.translate(x,y);g.scale(w/objectSizes[id][0],h/objectSizes[id][1]);objectRaw(g,id);g.restore();}
   function background(g,scene){if(EaiAssets.draw(g,'market:'+scene+'-bg',0,0,...sceneSizes[scene]))return;backgroundRaw(g,scene);}
   function streetLandmarks(g){
+    const houses=EaiAssets.images['scenery:marketHouses'];
+    const ground=EaiAssets.images['scenery:marketFloorPanorama'];
+    if(houses){
+      // Os PNGs novos são panoramas da fase inteira; desenhe em escala nativa, seguindo a câmera.
+      g.drawImage(houses,0,0,4600,264);
+      if(ground)g.drawImage(ground,0,0,4600,264);
+      return true;
+    }
     const draw=(id,box,x,y,w,h)=>{const im=EaiAssets.images['scenery:'+id];if(im)g.drawImage(im,...box,x,y,w,h);};
     // Casas menores em sequência: as marquises e beiradas originais recebem colisão.
     for(let block=0;block<9;block++){
@@ -102,6 +110,7 @@
     }
     draw('stallsSheet',[1238,584,276,239],2380,104,138,120);
     draw('marketSheet',[25,0,1005,515],4150,2,430,222);
+    return false;
   }
   function portal(g,x,y,label,color='#f3d170'){R(g,x-5,y-9,56,37,'#273f35c0');R(g,x-3,y-7,52,33,'#acb49030');T(g,'E',x+21,y+4,10,color,'center');T(g,label,x+21,y+15,5,'#f1e4be','center');}
   function hazards(g,w,behind=false){
@@ -134,8 +143,8 @@
     else R(g,0,0,480,270,'#243c32');
     g.save();g.translate(-Math.floor(w.camera),-Math.floor(w.cameraY));
     if(w.scene!=='street')background(g,w.scene==='rescue'?'garage':w.scene==='garage'?'garage-yard':w.scene);
-    if(w.scene==='street')streetLandmarks(g);
-    if(!['cart','unloading','rescue','garage'].includes(w.scene))for(const p of w.level.platforms){if(p.x+p.w<w.camera||p.x>w.camera+480)continue;if(w.scene==='street'&&p.h<=20)continue;EaiAssets.tile(g,p.h>20?'ground':'platform',p.x,p.y,p.w,p.h,p.h>20?24:20);}
+    const customStreet= w.scene==='street' ? streetLandmarks(g) : false;
+    if(!['cart','unloading','rescue','garage'].includes(w.scene))for(const p of w.level.platforms){if(p.x+p.w<w.camera||p.x>w.camera+480)continue;if(w.scene==='street'&&(p.h<=20||customStreet))continue;EaiAssets.tile(g,p.h>20?'ground':'platform',p.x,p.y,p.w,p.h,p.h>20?24:20);}
     if(w.scene==='street'){
       R(g,858,222,46,4,'#273f36');for(let x=860;x<902;x+=6)R(g,x,223,2,3,'#90a58b');T(g,'↓ ACESSO AO ESGOTO',880,211,6,'#e7dcac','center');
       T(g,'BADOQUE ↑',355,43,7,'#ffe6a0','center');
