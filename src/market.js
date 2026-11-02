@@ -12,8 +12,27 @@
       redFlag:raw.scene==='rescue',time:Number.isFinite(raw.time)?clamp(raw.time,0,99999):0};
   }
   function item(id,type,x,y){return {id,type,x,y,w:type==='flag'?14:12,h:type==='flag'?25:15,taken:false};}
-  function rival(x){return {kind:'rival',x,y:198,w:16,h:26,origin:x,dir:-1,hp:2,maxHp:2,hit:0,shoot:1.8,boss:false};}
-  function trash(x,y=204){return {x,y,w:20,h:20,exploded:false};}
+  const STREET_GROUND=190;
+  const STREET_LEDGES=[
+    [140,138,145],[140,100,145],[285,138,92],[378,100,100],
+    [500,100,190],[558,54,135],[695,100,300],[695,38,120],[820,54,170],
+    [990,140,118],[990,104,118],[990,68,118],[990,34,118],[990,3,118],
+    [1110,140,170],[1270,140,155],[1270,74,155],[1410,140,112],[1410,100,112],[1410,58,112],
+    [1515,140,125],[1515,104,125],[1515,68,125],[1515,32,125],
+    [1640,140,125],[1640,94,125],[1640,52,125],[1765,140,125],[1765,100,125],[1765,38,125],
+    [1890,140,145],[1890,98,145],[1890,54,145],[1890,20,145],
+    [2040,150,150],[2040,105,150],[2040,70,150],[2200,140,180],[2200,100,180],[2200,62,180],
+    [2385,150,495],
+    [2860,150,95],[2960,132,95],[3060,114,95],[3160,96,95],
+    [3260,140,170],[3300,100,145],[3300,66,145],
+    [3440,154,55],[3495,134,55],[3550,114,55],[3605,94,55],[3660,74,55],
+    [3700,140,220],[3700,102,220],[3700,58,220],
+    [3920,140,120],[3920,104,120],[3920,68,120],[3920,32,120],
+    [4050,140,100],[4140,100,100],[4140,55,345],[4140,8,345]
+  ];
+  function streetItemY(x,height=15){const ledge=STREET_LEDGES.filter(([px,y,w])=>x>=px&&x<=px+w).sort((a,b)=>b[1]-a[1])[0];return (ledge?.[1]??STREET_GROUND)-height;}
+  function rival(x){return {kind:'rival',x,y:STREET_GROUND-26,w:16,h:26,origin:x,dir:-1,hp:2,maxHp:2,hit:0,shoot:1.8,boss:false};}
+  function trash(x,y=STREET_GROUND-20){return {x,y,w:20,h:20,exploded:false};}
   class MarketWorld extends World{
     constructor(character=0,upgrades={},checkpoint=null,random=Math.random){
       super(0,character,upgrades);this.market=true;this.random=random;this.collected=new Set();this.achievements=new Set(upgrades.achievements||[]);
@@ -44,14 +63,14 @@
       if(this.level&&['street','sewer'].includes(previous))this.sceneCache[previous]={level:this.level,bags:this.bags};
       this.scene=scene;this.stageTime=0;this.camera=0;this.cameraY=0;this.shots=[];this.particles=[];this.hazards=[];this.explosions=[];this.supports=[];this.prev={};this.transitionTimer=0;this.nextHazard=1.4;this.lastHint=-10;this.bossDefeated=false;
       this.level={index:0,width:480,height:270,platforms:[{x:0,y:224,w:480,h:70}],items:[],enemies:[]};this.bags=[];
-      Object.assign(this.player,{x:45,y:197,vx:0,vy:0,grounded:false,slide:0,jumps:0,shoot:0,inv:1});
+      Object.assign(this.player,{x:45,y:scene==='street'?STREET_GROUND-27:197,vx:0,vy:0,grounded:false,slide:0,jumps:0,shoot:0,inv:1});
       if(scene==='street'){
-        this.level.width=4600;const ledges=[];for(let block=0;block<9;block++){const x=block*450;ledges.push([x+4,166,94],[x+127,150,133],[x+127,107,133],[x+127,48,116],[x+300,106,112],[x+302,53,94]);}this.level.platforms=[{x:0,y:224,w:4600,h:70},...ledges.map(([x,y,w])=>({x,y,w,h:12}))];
-        this.level.items=[...(!this.slingshot?[item('street-sling','slingshot',345,28)]:[]),item('street-flag-1','flag',207,87),item('street-flag-2','flag',2440,73),item('street-flag-far','flag',3900,60),item('street-juice','juice',1010,207),item('street-juice-middle','juice',2360,207),item('street-juice-last','juice',3670,207)];
-        for(const [i,x]of [100,185,230,320,465,590,670,940,1080,1230,1390,1620,1810,2030,2220,2470,2670,2880,3060,3330,3540,3780,3970,4150].entries())this.level.items.push(item('street-can-'+i,'can',x,x<700?(x<150?207:x<300?168:x<465?137:x<625?112:84):x>4150?107:x%2?142:198));
+        this.level.width=4600;this.level.platforms=[{x:0,y:STREET_GROUND,w:4600,h:80},...STREET_LEDGES.map(([x,y,w])=>({x,y,w,h:8}))];
+        this.level.items=[...(!this.slingshot?[item('street-sling','slingshot',1036,18)]:[]),item('street-flag-1','flag',205,75),item('street-flag-2','flag',2485,streetItemY(2485,25)),item('street-flag-far','flag',3900,streetItemY(3900,25)),item('street-juice','juice',1010,STREET_GROUND-16),item('street-juice-middle','juice',2360,STREET_GROUND-16),item('street-juice-last','juice',3670,STREET_GROUND-16)];
+        for(const [i,x]of [100,185,230,320,465,590,670,940,1080,1230,1390,1620,1810,2030,2220,2470,2670,2880,3060,3330,3540,3780,3970,4150].entries())this.level.items.push(item('street-can-'+i,'can',x,streetItemY(x)));
         this.level.enemies=[rival(770),rival(1120),rival(1530),rival(1910),rival(2290),rival(2670),rival(3030),rival(3530),rival(4000)];this.bags=[trash(735),trash(1090),trash(1495),trash(1850),trash(2385),trash(2970),trash(3540),trash(4110)];
         if(returning&&this.sceneCache.street){this.level=this.sceneCache.street.level;this.bags=this.sceneCache.street.bags;}
-        if(returning){this.player.x=520;this.player.y=197;}
+        if(returning){this.player.x=520;this.player.y=STREET_GROUND-27;}
       }else if(scene==='sewer'){
         this.level.height=620;this.level.platforms=[{x:0,y:570,w:480,h:70}];
         for(let i=0;i<10;i++)this.level.platforms.push({x:i%2?250:80,y:525-i*45,w:130,h:10});
@@ -220,7 +239,7 @@
     interact(input){
       const p=this.player;if(!input.interact||this.prev.interact)return;
       if(this.scene==='street'){
-        if(Math.abs(p.x-880)<50&&p.y>165){this.enter('sewer');return;}
+        if(Math.abs(p.x-880)<50&&p.y>STREET_GROUND-29){this.enter('sewer');return;}
         if(p.x>4340){if(!this.slingshot){this.hint('O Sacolão está fechado! Volte à laje e pegue o badogue.');return;}this.enter('cart');this.setCheckpoint(false);return;}
       }
       if(this.scene==='sewer'&&p.x>60&&p.x<220&&p.y<175){this.enter('street',true);return;}
