@@ -8,7 +8,7 @@
   ];
   const LEVELS = [
     {name:'O Mercado',area:'FEIRINHA DA COMUNIDADE',boss:'Seu Maneco',team:'Turma da Rua de Baixo',color:'#d66a48',sky:'#a8cbc0',light:'#f3d989',theme:'market',rescue:1,story:'Atravesse a longa rua da comunidade. Pegue o badoque na laje, explore o esgoto secreto, passe pelo Sacolão e vença Teca, Neymar e Seu Maneco para resgatar Tuca.'},
-    {name:'Escola Pública',area:'PÁTIO DA ESCOLA',boss:'Chumbinho',team:'Meninos do Morro',color:'#81a16a',sky:'#e0bb9a',light:'#f5d78f',theme:'school',rescue:2,story:'Jana está escondida na Escola Pública. Atravesse os corredores, reúna as bandeiras e enfrente Chumbinho e os Meninos do Morro para libertá-la.'},
+    {name:'Escola Pública',area:'TERRITÓRIO DAS VALESKAS',boss:'Juju',team:'As Valeskas',color:'#df7297',sky:'#e0bb9a',light:'#f5d78f',theme:'school',rescue:2,story:'Jana está na Escola Pública, território das Valeskas. Enfrente Michelly numa batalha de dança na sala de aula e Juju no teatro para libertá-la.'},
     {name:'O Campinho',area:'BOLA NO PÉ, OLHO NAS PISTAS',boss:'Talinho',team:'Os Craques',color:'#5d9cba',sky:'#9cc8cd',light:'#f6e4a8',theme:'field',rescue:3,story:'Lea está no campinho da Pocinha. Enfrente os Craques e Talinho para reunir os quatro Canários.'},
     {name:'Topo do Morro',area:'A ÚLTIMA ESTRELA',boss:'Vadinho',team:'Equipe do Topo',color:'#a38abe',sky:'#8c9cae',light:'#ecc58f',theme:'rooftop',rescue:null,story:'A Batalha das Estrelas termina lá em cima. Reúna as últimas bandeiras e conquiste o morro com a sua equipe.'}
   ];
@@ -17,7 +17,7 @@
   function cleanSave(raw){
     const n=(v,max)=>Number.isFinite(v)?clamp(Math.floor(v),0,max):0;
     const completed=n(raw?.completed,LEVELS.length),oldBest=raw?.best||[],bestOrder=raw?.campaignVersion===2?[0,1,2,3]:[0,3,2,4];
-    return {campaignVersion:2,completed,selected:n(raw?.selected,3),cans:n(raw?.cans,99999),power:n(raw?.power,2),armor:n(raw?.armor,1),magnet:n(raw?.magnet,1),badogue:raw?.badogue===true||completed>0,best:Array.from({length:LEVELS.length},(_,i)=>n(oldBest[bestOrder[i]],999999)),achievements:Array.isArray(raw?.achievements)?[...new Set(raw.achievements.filter(a=>['sewer','flags','mariana','neymar','maneco'].includes(a)))]:[],marketCheckpoint:root.EaiMarket?.cleanCheckpoint(raw?.marketCheckpoint)||null};
+    return {campaignVersion:2,completed,selected:n(raw?.selected,3),cans:n(raw?.cans,99999),power:n(raw?.power,2),armor:n(raw?.armor,1),magnet:n(raw?.magnet,1),jump:n(raw?.jump,2),badogue:raw?.badogue===true||completed>0,best:Array.from({length:LEVELS.length},(_,i)=>n(oldBest[bestOrder[i]],999999)),achievements:Array.isArray(raw?.achievements)?[...new Set(raw.achievements.filter(a=>['sewer','flags','mariana','neymar','maneco','michelly','juju'].includes(a)))]:[],marketCheckpoint:root.EaiMarket?.cleanCheckpoint(raw?.marketCheckpoint)||null,schoolCheckpoint:['yard','classroom','theater'].includes(raw?.schoolCheckpoint)?raw.schoolCheckpoint:null};
   }
   function createLevel(index){
     const platforms=[{x:0,y:224,w:760,h:70},{x:824,y:224,w:640,h:70},{x:1536,y:224,w:864,h:70}];
@@ -31,14 +31,16 @@
     [430,1100,1720].forEach((x,i)=>items.push({type:'flag',x,y:[146,107,150][i],w:12,h:25,taken:false}));
     [660,1320,2000].forEach(x=>items.push({type:'juice',x,y:207,w:9,h:16,taken:false}));
     const enemies=[530,930,1290,1610,1890].map((x,i)=>({x,y:198,w:16,h:26,origin:x,dir:i%2?1:-1,hp:index>2?3:2,hit:0,shoot:2+i*.4,boss:false}));
-    enemies.push({x:2180,y:180,w:27,h:44,origin:2180,dir:-1,hp:8+index*2,maxHp:8+index*2,hit:0,shoot:1.5,boss:true});
+    if(index!==1)enemies.push({x:2180,y:180,w:27,h:44,origin:2180,dir:-1,hp:8+index*2,maxHp:8+index*2,hit:0,shoot:1.5,boss:true});
     return {index,width:2400,platforms,items,enemies};
   }
   class World{
     constructor(index,character,upgrades={}){
       this.level=createLevel(index);this.character=CHARACTERS[character]||CHARACTERS[0];this.upgrades=upgrades;
       this.player={x:55,y:185,w:14,h:27,vx:0,vy:0,dir:1,grounded:false,hp:6+(upgrades.armor?2:0),maxHp:6+(upgrades.armor?2:0),inv:0,jumps:0,slide:0,slideCooldown:0,shoot:0};
-      this.camera=0;this.time=0;this.flags=0;this.cans=0;this.checkpoint=false;this.particles=[];this.shots=[];this.events=[];this.status='playing';this.prev={};this.bossDefeated=false;
+      this.camera=0;this.time=0;this.flags=0;this.cans=0;this.checkpoint=index===1;this.particles=[];this.shots=[];this.events=[];this.status='playing';this.prev={};this.bossDefeated=false;
+      this.schoolStage=index===1?(upgrades.schoolCheckpoint==='classroom'?'michelly':upgrades.schoolCheckpoint==='theater'?'juju':'yard'):null;this.schoolCheckpoint=index===1?(upgrades.schoolCheckpoint||'yard'):null;
+      if(this.schoolStage==='michelly'||this.schoolStage==='juju')this.beginDance(this.schoolStage);
     }
     event(type,data={}){this.events.push({type,...data});}
     hit(amount=1){const p=this.player;if(p.inv>0||this.status!=='playing')return;p.hp-=amount;p.inv=1.4;p.vy=-155;p.vx=-p.dir*80;this.event('hurt');if(p.hp<=0){p.hp=0;this.status='dead';this.event('dead');}}
@@ -46,11 +48,12 @@
     strike(e,damage){if(e.hit>0||e.hp<=0)return;e.hp-=damage;e.hit=.22;this.burst(e.x+e.w/2,e.y+10,e.boss?'#f8ce54':'#e5a36e');this.event('enemyHit');if(e.hp<=0){this.cans+=e.boss?10:2;this.event('enemyDown');if(e.boss){this.bossDefeated=true;this.event('bossDown');}}}
     step(dt,input={}){
       if(this.status!=='playing')return;dt=Math.min(dt,1/30);this.time+=dt;
+      if(this.level.index===1&&this.schoolStage!=='yard'){this.stepSchool(dt,input);this.prev={...input};return;}
       const p=this.player,c=this.character;const press=k=>input[k]&&!this.prev[k];this.aim=input.aim||null;
       p.inv=Math.max(0,p.inv-dt);p.shoot-=dt;p.slide-=dt;p.slideCooldown-=dt;
       const axis=(input.right?1:0)-(input.left?1:0);
       if(axis)p.dir=axis;
-      if(press('jump')&&(p.grounded||(c.id==='jana'&&p.jumps<2))){p.vy=-c.jump;p.grounded=false;p.jumps++;this.event('jump');}
+      if(press('jump')&&(p.grounded||(c.id==='jana'&&p.jumps<2))){p.vy=-(c.jump+(this.upgrades.jump||0)*48);p.grounded=false;p.jumps++;this.event('jump');}
       if(press('slide')&&p.grounded&&p.slideCooldown<=0){p.slide=c.id==='luketa'?.36:.25;p.slideCooldown=.8;this.event('slide');}
       p.vx=p.slide>0?p.dir*265:axis*c.speed;
       if(input.shoot&&p.shoot<=0){
@@ -64,6 +67,7 @@
       for(const s of this.level.platforms){if(p.vy>=0&&oldBottom<=s.y+1&&p.y+p.h>=s.y&&p.x+p.w>s.x&&p.x<s.x+s.w){p.y=s.y-p.h;p.vy=0;p.grounded=true;p.jumps=0;}}
       if(p.y>290){p.hp=0;this.status='dead';this.event('dead');}
       if(p.x>1180&&!this.checkpoint){this.checkpoint=true;this.event('checkpoint');}
+      if(this.level.index===1&&p.x>820){this.schoolStage='michelly';this.schoolCheckpoint='classroom';this.event('schoolCheckpoint',{checkpoint:'classroom'});this.beginDance('michelly');this.prev={...input};return;}
       for(const item of this.level.items){if(item.taken)continue;let range=item.type==='can'&&this.upgrades.magnet?36:5;
         if(overlap({x:p.x-range,y:p.y-range,w:p.w+range*2,h:p.h+range*2},item)){
           item.taken=true;if(item.type==='can'){this.cans++;this.event('can');}if(item.type==='flag'){this.flags++;this.event('flag');}if(item.type==='juice'){p.hp=Math.min(p.maxHp,p.hp+2);this.event('juice');}this.burst(item.x,item.y,item.type==='flag'?'#ed754e':'#e7d683');
@@ -86,13 +90,36 @@
       this.shots=this.shots.filter(s=>s.life>0);
       for(const f of this.particles){f.x+=f.vx*dt;f.y+=f.vy*dt;f.vy+=220*dt;f.life-=dt;}this.particles=this.particles.filter(f=>f.life>0);
       this.camera=clamp(p.x-175,0,this.level.width-480);
-      if(p.x>2290&&this.status==='playing'){
+      if(p.x>2290&&this.status==='playing'&&this.level.index!==1){
         if(this.flags===3&&this.bossDefeated){this.status='won';this.event('win');}
         else if(!this.gateNotice||this.time-this.gateNotice>3){this.gateNotice=this.time;this.event('gate',{text:this.flags<3?'Ainda faltam bandeiras! Explore as plataformas.':'Vença o chefe para abrir a passagem!'});}
       }
       this.prev={...input};
     }
-    retryCheckpoint(){if(!this.checkpoint)return false;const p=this.player;Object.assign(p,{x:1190,y:140,vx:0,vy:0,hp:p.maxHp,inv:2,jumps:0,slide:0});this.shots=[];this.prev={};this.status='playing';return true;}
+    beginDance(boss){this.schoolStage=boss;const keys=boss==='michelly'?['left','up','right','down','up','left','down','right','up','left']:['up','right','down','left','up','up','right','down','left','right','up','down'];this.dance={boss,keys,index:0,hits:0,misses:0,timer:2.2,noteTime:2.2,complete:false};this.player.x=72;this.player.y=190;this.player.vx=0;this.player.vy=0;this.player.grounded=true;this.sonicWaves=[];this.waveTimer=2.5;this.shots=[];this.event('schoolStage',{stage:boss});}
+    stepSchool(dt,input){
+      const p=this.player,d=this.dance,press=k=>input[k]&&!this.prev[k];
+      if(this.schoolStage==='transition'){this.transitionTimer-=dt;if(this.transitionTimer<=0)this.beginDance('juju');return;}
+      if(!d)return;
+      d.timer-=dt;
+      const arrows=['left','up','down','right'];
+      let hit=false;for(const k of arrows)if(press('dance'+k[0].toUpperCase()+k.slice(1))){if(k===d.keys[d.index]){d.hits++;hit=true;this.event('danceHit');}else d.misses++;d.index++;d.timer=d.noteTime;break;}
+      if(d.timer<=0&&!hit){d.misses++;d.index++;d.timer=d.noteTime;}
+      if(d.index>=d.keys.length){const accuracy=d.hits/d.keys.length;if(accuracy>=.5){if(d.boss==='michelly'){this.schoolCheckpoint='theater';this.schoolStage='transition';this.transitionTimer=2.4;this.event('schoolCheckpoint',{checkpoint:'theater'});this.event('schoolStage',{stage:'transition'});}else{this.bossDefeated=true;this.flags=3;this.cans+=20;this.event('achievement',{id:'juju',title:'Rainha do palco'});this.event('bossDown');this.status='won';this.event('win');}this.event('achievement',{id:d.boss,title:d.boss==='michelly'?'Passo marcado':'Show encerrado'});}
+        else{d.index=0;d.hits=0;d.misses=0;d.timer=1.5;this.event('hint',{text:'Menos de 50%! A música recomeça — acompanha as setas.'});}}
+      if(d.boss==='juju'){
+        this.waveTimer-=dt;if(this.waveTimer<=0){this.sonicWaves.push({x:455,y:154+Math.random()*48,w:22,h:24,vx:-155,life:3});this.waveTimer=2.1;this.event('soundwave');}
+        const axis=(input.right?1:0)-(input.left?1:0);p.x=clamp(p.x+axis*105*dt,30,260);if(axis)p.dir=axis;
+        if(press('jump')&&(p.grounded||p.jumps<1)){p.vy=-290;p.grounded=false;p.jumps++;}
+        p.vy+=800*dt;p.y+=p.vy*dt;if(p.y>=190){p.y=190;p.vy=0;p.grounded=true;p.jumps=0;}
+        if(press('slide'))p.slide=.36;else p.slide=Math.max(0,p.slide-dt);
+        if(input.shoot&&p.shoot<=0&&this.upgrades.badogue){p.shoot=.45;this.waveTimer+=1.2;this.event('shoot');this.event('jujuStun');}
+        for(const w of this.sonicWaves){w.x+=w.vx*dt;w.life-=dt;if(overlap(w,p)&&p.slide<=0&&p.inv<=0){this.hit();w.life=0;}}
+        this.sonicWaves=this.sonicWaves.filter(w=>w.life>0);
+      }
+      p.inv=Math.max(0,p.inv-dt);p.shoot-=dt;
+    }
+    retryCheckpoint(){if(!this.checkpoint)return false;const p=this.player;if(this.level.index===1){this.status='playing';p.hp=p.maxHp;p.inv=2;if(this.schoolCheckpoint==='yard'){this.schoolStage='yard';this.dance=null;Object.assign(p,{x:55,y:185,vx:0,vy:0,grounded:false,jumps:0});this.shots=[];}else this.beginDance(this.schoolCheckpoint==='theater'?'juju':'michelly');this.prev={};return true;}Object.assign(p,{x:1190,y:140,vx:0,vy:0,hp:p.maxHp,inv:2,jumps:0,slide:0});this.shots=[];this.prev={};this.status='playing';return true;}
   }
   const api={CHARACTERS,LEVELS,World,createLevel,cleanSave,clamp,overlap};
   if(typeof module!=='undefined')module.exports=api;root.EaiEngine=api;

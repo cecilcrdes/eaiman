@@ -96,8 +96,38 @@
     if(!e.boss){sprite(g,e.x,e.y,{...CHARACTERS[1],id:'enemy',hair:'#594639',pants:'#636f65',skin:'#b17c50'},t,e.dir,'run');rect(g,e.x+2,e.y+12,11,9,l.color);rect(g,e.x,e.y,16,3,l.color);return;}
     const x=e.x,y=e.y;rect(g,x+4,y,19,15,'#bd895e');rect(g,x+4,y,19,4,'#5f493a');rect(g,x+2,y+6,3,6,'#bd895e');rect(g,x+21,y+6,3,6,'#bd895e');rect(g,x+7,y+6,3,2,'#2a3b32');rect(g,x+17,y+6,3,2,'#2a3b32');rect(g,x+8,y+10,12,3,'#594133');rect(g,x+2,y+15,24,19,l.color);rect(g,x,y+17,4,16,'#bd895e');rect(g,x+26,y+17,4,16,'#bd895e');rect(g,x+7,y+17,14,17,index===0?'#e8dab0':'#dec778');rect(g,x+5,y+34,9,7,'#57635d');rect(g,x+16,y+34,9,7,'#57635d');rect(g,x+3,y+41,11,3,'#37443c');rect(g,x+16,y+41,11,3,'#37443c');
   }
+  function schoolArena(g,world,t){
+    const d=world.dance,transition=world.schoolStage==='transition',theater=world.schoolStage==='juju';
+    rect(g,0,0,480,270,theater||transition?'#241f36':'#d8c49c');
+    if(theater||transition){
+      rect(g,0,0,480,192,'#563248');for(let x=0;x<480;x+=18)rect(g,x,0,8,185,x%36?'#71384c':'#843d4c');rect(g,0,176,480,17,'#d5a75c');
+      // Stage slides in from the right during the entrance beat.
+      const slide=transition?Math.max(0,Math.min(1,(2.4-world.transitionTimer)/1.3)):1,off=(1-slide)*360;
+      rect(g,75+off,156,480,84,'#714d46');rect(g,75+off,153,480,7,'#e3b55d');rect(g,107+off,210,438,30,'#4c3a3e');
+      for(const x of [90,130,378,418]){rect(g,x+off,102,28,56,'#252936');rect(g,x+off+4,106,20,48,'#49515c');rect(g,x+off+8,119,12,19,'#222631');rect(g,x+off+10,124,8,8,'#bb83c6');}
+      if(!transition){const x=270,y=128;rect(g,x-10,y,20,11,'#81503e');rect(g,x-10,y+11,20,20,'#db6c98');rect(g,x-9,y+2,18,8,'#e0ae72');rect(g,x-15,y+30,12,12,'#674e72');rect(g,x+3,y+30,12,12,'#674e72');rect(g,x+16,y+4,2,24,'#d7c6ae');rect(g,x+14,y+2,8,3,'#eee5ce');
+        for(const w of world.sonicWaves||[]){g.strokeStyle='#f7d5fa';g.lineWidth=3;g.beginPath();g.arc(w.x,w.y,9+Math.sin(t*12)*2,-1.1,1.1);g.stroke();g.beginPath();g.arc(w.x,w.y,15+Math.sin(t*12)*2,-1.1,1.1);g.stroke();}
+      }
+    }else{
+      rect(g,0,0,480,160,'#d7c7a1');rect(g,22,26,436,82,'#788b8a');rect(g,29,32,422,70,'#435b5b');
+      rect(g,36,42,100,4,'#d6d1b0');text(g,'SALA DE AULA',86,60,9,'#f2e3b7','center');
+      for(const x of [18,424]){rect(g,x,116,38,48,'#29363a');rect(g,x+5,121,28,37,'#566871');rect(g,x+10,130,18,15,'#8c7392');}
+      rect(g,0,171,480,11,'#806044');rect(g,0,182,480,88,'#80664a');rect(g,0,187,480,4,'#c8a46e');
+      // Students form a loose dance circle around Luketa and Michelly.
+      for(let i=0;i<8;i++){const a=i*Math.PI/4,x=240+Math.cos(a)*82,y=174+Math.sin(a)*10;rect(g,x-6,y-19,12,9,'#754b3c');rect(g,x-7,y-10,14,14,i%2?'#db7297':'#678f92');rect(g,x-6,y+4,5,8,'#42434a');rect(g,x+1,y+4,5,8,'#42434a');}
+      rect(g,227,142,25,15,'#5b3e37');rect(g,229,135,21,10,'#d9a879');rect(g,226,153,27,19,'#e574a0');rect(g,228,171,9,10,'#343844');rect(g,242,171,9,10,'#343844');
+      text(g,'MICHELLY',240,129,7,'#fff1bd','center');
+    }
+    if(world.player){const p=world.player;sprite(g,theater?Math.max(44,Math.min(135,p.x)):p.x,p.y,world.character,t,p.dir,'idle',1.3);}
+    if(transition){rect(g,130,88,220,54,'#263d39');text(g,'O TEATRO DA ESCOLA',240,108,12,'#f5d986','center');text(g,'O PALCO ESTÁ CHEGANDO…',240,126,7,'#fff0d0','center');return;}
+    if(!d)return;
+    rect(g,8,8,176,37,'#203632dd');text(g,theater?'JUJU • BATALHA NO TEATRO':'MICHELLY • BATALHA DE DANÇA',16,21,7,'#fff0c4');text(g,`ACERTOS ${d.hits}/${d.keys.length} • ${Math.floor(d.hits/d.keys.length*100)}%`,16,36,7,'#f4d481');
+    rect(g,192,18,96,42,'#263d39dd');const symbol={left:'←',right:'→',up:'↑',down:'↓'};text(g,symbol[d.keys[d.index]]||'♪',240,48,25,'#ffe18a','center');rect(g,196,63,88,4,'#283834');rect(g,196,63,88*Math.max(0,d.timer/d.noteTime),4,'#ee8b74');
+    text(g,'ACERTE PELO MENOS 50% DA MÚSICA',240,256,7,'#fff0c4','center');if(theater)text(g,'A/D DESVIA • ESPAÇO PULA • Z ABAIXA • X DISTRAI',240,245,6,'#f8d49b','center');
+  }
   function render(g,world,t=0,menu=false,index=0){
     g.imageSmoothingEnabled=!!window.EaiAssets?.config.smooth;const cam=world?world.camera:menu?260:0;index=world?world.level.index:index;
+    if(world&&index===1&&world.schoolStage!=='yard'){schoolArena(g,world,t);return;}
     sky(g,index,cam,t);foreground(g,index,cam,t);
     g.save();g.translate(-Math.floor(cam),0);
     const plats=world?world.level.platforms:EaiEngine.createLevel(index).platforms;
